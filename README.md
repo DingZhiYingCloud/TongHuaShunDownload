@@ -36,6 +36,24 @@
 
 ---
 
+## 独立静态版（无需后端）
+
+如需把已克隆页面导出为**不依赖 Django / 数据库 / 小影 API** 的纯静态站点，已提供自包含目录：
+
+```
+xb160809-standalone/
+├── index.html     # 直接双击打开即可
+├── favicon.ico
+├── css/           # 样式表
+├── js/            # main.js + jQuery(本地)
+└── images/        # 全部背景图
+```
+
+- 版本号 / 更新日志 / 详情链接均已固化为静态内容
+- 不含友情链接与任何外部接口请求，可整体拷贝或压缩分发
+
+---
+
 ## 项目结构
 
 ```
@@ -51,6 +69,7 @@ ToHuaShunDownload/
 │   └── templates/            # template.html 母版 + index.html 克隆页 + 错误页
 ├── middlewares/request_guard # 请求守卫组件(日志/规则/蜘蛛识别)
 ├── media/favicon.ico         # 已替换为源站 favicon
+├── xb160809-standalone/      # 独立静态版落地页(无需后端, 见下节)
 ├── screenshots/              # README 页面截图
 ├── cache/                    # 文件缓存(运行时生成)
 └── .env                      # 环境配置(不入库)
