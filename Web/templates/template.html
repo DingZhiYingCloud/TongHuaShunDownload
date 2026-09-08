@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit" />
+    <meta name="force-rendering" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="baidu-site-verification" content="codeva-D86XF7EVRs" />
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>{% block title %}同花顺远航版{% endblock %}</title>
+    <meta name="keywords" content="{% block keywords %}同花顺远航版,急速智能,同花顺下载{% endblock %}" />
+    <meta name="description" content="{% block description %}同花顺远航版官方下载页面。{% endblock %}" />
+    <!-- 搜索引擎爬虫：允许收录与跟随链接 -->
+    <meta name="robots" content="index, follow" />
+    <!-- 规范链接：声明当前页面唯一权威地址，避免重复内容（分页/参数等）被拆分收录 -->
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}" />
+    <!-- 移动端浏览器主题色 -->
+    <meta name="theme-color" content="#1677ff" />
+    <link rel="shortcut icon" href="/media/favicon.ico">
+    <link rel="bookmark" href="/media/favicon.ico">
+    <!-- 结构化数据（schema.org）：声明站点信息与站内搜索，助力搜索引擎理解网站 -->
+
+    {% block head %}{% endblock %}
+
+</head>
+
+<body>
+    {% include 'common_html/headers.html' %}
+    {% block content %}{% endblock %}
+
+    {% include 'common_html/friend_links.html' %}
+
+    {% block js %}{% endblock %}
+    
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+{% extends 'request_guard/base.html' %}
+{% block content %}
+<div class="guard-card">
+    <h3>日志详情 <a class="layui-btn layui-btn-xs layui-btn-primary" style="float:right;" href="{% url 'rg_logs' %}">返回列表</a></h3>
+    <table class="layui-table" style="table-layout:fixed;">
+        <tr><th style="width:140px;">时间</th><td>{{ log.ts|date:'Y-m-d H:i:s' }}</td></tr>
+        <tr><th>IP</th><td>{{ log.ip }}
+            <form class="inline" method="post" action="{% url 'rg_block_ip' %}" onsubmit="return confirm('确定封禁 {{ log.ip }} ？')" style="margin-left:8px;">
+                <input type="hidden" name="ip" value="{{ log.ip }}">
+                <input type="hidden" name="back" value="{{ request.get_full_path }}">
+                <button type="submit" class="layui-btn layui-btn-xs layui-btn-danger">封禁该 IP</button>
+            </form>
+        </td></tr>
+        <tr><th>身份</th><td><span class="tag tag-{{ log.identity }}">{{ log.identity_label }}</span>{% if log.spider %} <b>蜘蛛:</b> {{ log.spider }}{% endif %}</td></tr>
+        <tr><th>动作</th><td><span class="tag tag-{{ log.action }}">{{ log.action_label }}</span> {% if log.reason %}<small>{{ log.reason }}</small>{% endif %}</td></tr>
+        <tr><th>方法</th><td>{{ log.method }}</td></tr>
+        <tr><th>完整地址</th><td>{{ log.path }}{% if log.query %}?{{ log.query }}{% endif %}</td></tr>
+        <tr><th>状态码</th><td>{{ log.status }}</td></tr>
+        <tr><th>耗时</th><td>{{ log.duration_ms }} ms</td></tr>
+        <tr><th>User-Agent</th><td style="word-break:break-all;">{{ log.ua }}</td></tr>
+        <tr><th>来源 Referer</th><td style="word-break:break-all;">{{ log.referer|default:'(无)' }}</td></tr>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'request_guard/base.html' %}
+{% block content %}
+<div class="layui-row layui-col-space12">
+    <div class="layui-col-md4">
+        <div class="guard-card">
+            <h3>新增规则</h3>
+            <form method="post" action="{% url 'rg_rule_add' %}" class="layui-form" lay-filter="add">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">对象</label>
+                    <div class="layui-input-block">
+                        <select name="kind">
+                            {% for v, label in kind_choices %}<option value="{{ v }}">{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">方式</label>
+                    <div class="layui-input-block">
+                        <select name="match_type">
+                            {% for v, label in match_choices %}<option value="{{ v }}">{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">匹配值</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="value" placeholder="如 1.2.3.4 / baiduspider / example.com / /admin" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">动作</label>
+                    <div class="layui-input-block">
+                        <select name="action">
+                            {% for v, label in action_choices %}<option value="{{ v }}">{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">跳转地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="redirect_url" placeholder="仅动作选 302跳转 时填写" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">过期时间</label>
+                    <div class="layui-input-block">
+                        <input type="datetime-local" name="expires_at" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="note" class="layui-input" placeholder="规则说明">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="enabled" value="1" checked title="创建后立即启用">
+                        <button type="submit" class="layui-btn" style="background:#1E9FFF;">新增</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="layui-col-md8">
+        <div class="guard-card">
+            <h3>全部规则（{{ rules|length }}）</h3>
+            <table class="layui-table">
+                <thead><tr>
+                    <th>ID</th><th>对象</th><th>匹配值</th><th>动作</th><th>备注</th>
+                    <th>状态</th><th>命中</th><th>过期</th><th>操作</th>
+                </tr></thead>
+                <tbody>
+                {% for r in rules %}
+                <tr>
+                    <td>{{ r.pk }}</td>
+                    <td>{{ r.get_kind_display }}</td>
+                    <td><span class="elip" title="{{ r.value }}">{{ r.value }}</span></td>
+                    <td>{{ r.get_action_display }}{% if r.action == 'redirect' and r.redirect_url %}<br><small>{{ r.redirect_url }}</small>{% endif %}</td>
+                    <td>{{ r.note }}</td>
+                    <td>
+                        {% if r.pk in active_ids %}
+                            <span class="tag tag-human_ref">生效中</span>
+                        {% else %}
+                            <span class="tag tag-unknown">停用/过期</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ r.hit_count }}</td>
+                    <td>{{ r.expires_at|date:'Y-m-d H:i'|default:'永久' }}</td>
+                    <td>
+                        <form class="inline" method="post" action="{% url 'rg_rule_toggle' r.pk %}">
+                            <button type="submit" class="layui-btn layui-btn-xs {% if r.enabled %}layui-btn-warm{% else %}layui-btn-normal{% endif %}">
+                                {% if r.enabled %}停用{% else %}启用{% endif %}
+                            </button>
+                        </form>
+                        <form class="inline" method="post" action="{% url 'rg_rule_delete' r.pk %}" onsubmit="return confirm('确认删除该规则？')">
+                            <button type="submit" class="layui-btn layui-btn-xs layui-btn-danger">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="9" style="text-align:center;color:#999;">暂无规则，可在左侧新增</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

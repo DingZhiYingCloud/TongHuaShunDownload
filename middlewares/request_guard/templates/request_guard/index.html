@@ -1,0 +1,99 @@
+{% extends 'request_guard/base.html' %}
+{% block content %}
+
+<div class="layui-row layui-col-space12">
+    <div class="layui-col-md3">
+        <div class="layui-card"><div class="layui-card-body">
+            <div class="stat-num">{{ today_total }}</div>
+            <div class="stat-label">今日请求</div>
+        </div></div>
+    </div>
+    <div class="layui-col-md3">
+        <div class="layui-card"><div class="layui-card-body">
+            <div class="stat-num" style="color:#FF5722;">{{ today_blocked }}</div>
+            <div class="stat-label">今日拦截/处置</div>
+        </div></div>
+    </div>
+    <div class="layui-col-md3">
+        <div class="layui-card"><div class="layui-card-body">
+            <div class="stat-num" style="color:#FFB800;">{{ today_spider }}</div>
+            <div class="stat-label">今日蜘蛛访问</div>
+        </div></div>
+    </div>
+    <div class="layui-col-md3">
+        <div class="layui-card"><div class="layui-card-body">
+            <div class="stat-num" style="color:#16b777;">{{ rules_total }}</div>
+            <div class="stat-label">启用规则数</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space12">
+    <div class="layui-col-md8">
+        <div class="guard-card">
+            <h3>最近请求 <a class="layui-btn layui-btn-xs" style="float:right;" href="{% url 'rg_logs' %}">查看全部</a></h3>
+            <table class="layui-table">
+                <thead><tr><th>时间</th><th>IP</th><th>身份</th><th>类型</th><th>请求</th><th>状态</th><th>动作</th></tr></thead>
+                <tbody>
+                {% for row in recent %}
+                <tr>
+                    <td>{{ row.ts|date:'m-d H:i:s' }}</td>
+                    <td><a href="{% url 'rg_logs' %}?ip={{ row.ip|urlencode }}">{{ row.ip }}</a></td>
+                    <td><span class="tag tag-{{ row.identity }}">{{ row.identity_label }}</span></td>
+                    <td>{{ row.spider }}</td>
+                    <td><span class="elip">{{ row.method }} {{ row.path }}</span></td>
+                    <td>{{ row.status }}</td>
+                    <td><span class="tag tag-{{ row.action }}">{{ row.action_label }}</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" style="text-align:center; color:#999;">暂无请求日志</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="guard-card">
+            <h3>热门 IP（今日）</h3>
+            <table class="layui-table">
+                {% for t in top_ips %}
+                <tr><td><a href="{% url 'rg_logs' %}?ip={{ t.ip|urlencode }}">{{ t.ip }}</a></td><td style="text-align:right;">{{ t.total }}</td></tr>
+                {% empty %}
+                <tr><td style="text-align:center;color:#999;">暂无数据</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="guard-card">
+            <h3>蜘蛛统计（今日）</h3>
+            <table class="layui-table">
+                {% for t in top_spiders %}
+                <tr><td>{{ t.spider|default:'未识别' }}</td><td style="text-align:right;">{{ t.total }}</td></tr>
+                {% empty %}
+                <tr><td style="text-align:center;color:#999;">今日暂无蜘蛛</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="guard-card">
+            <h3>频控临时封禁（{{ freq_bans|length }}）</h3>
+            {% if freq_bans %}
+            <table class="layui-table">
+                {% for ip, remain in freq_bans %}
+                <tr>
+                    <td>{{ ip }}</td>
+                    <td>剩余 {{ remain }}s</td>
+                    <td style="text-align:right;">
+                        <form class="inline" method="post" action="{% url 'rg_unban' %}">
+                            <input type="hidden" name="ip" value="{{ ip }}">
+                            <button type="submit" class="layui-btn layui-btn-xs">解除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p style="color:#999;">无</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

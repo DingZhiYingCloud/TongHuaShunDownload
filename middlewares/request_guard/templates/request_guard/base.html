@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>请求守卫 - {{ page_title }}</title>
+    <!-- layui 通过远程 CDN 引入(不随包提供本地静态文件) -->
+    <link href="https://unpkg.com/layui@2.13.9/dist/css/layui.css" rel="stylesheet">
+    <style>
+        body { background: #f2f2f2; }
+        .guard-body { margin: 16px; }
+        .guard-card { background: #fff; padding: 16px; margin-bottom: 16px; border-radius: 4px; }
+        .guard-card h3 { margin: 0 0 12px; font-size: 16px; color: #333; }
+        .stat-num { font-size: 26px; font-weight: 600; color: #1e9fff; }
+        .stat-label { color: #888; font-size: 13px; margin-top: 4px; }
+        .layui-table td, .layui-table th { font-size: 12px; padding: 6px 10px; }
+        .elip { max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom; }
+        .tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 12px; color: #fff; }
+        .tag-spider { background: #ffb800; } .tag-human_ref { background: #16b777; }
+        .tag-direct { background: #FF5722; } .tag-unknown { background: #909399; }
+        .tag-block { background: #FF5722; } .tag-disguise { background: #FFB800; }
+        .tag-redirect { background: #5FB878; } .tag-pass { background: #909399; } .tag-log { background: #1e9fff; }
+        .pager { margin-top: 12px; text-align: right; }
+        .pager a, .pager span { display: inline-block; padding: 4px 10px; margin-left: 4px; border: 1px solid #e2e2e2; background: #fff; color: #333; border-radius: 2px; }
+        .pager .cur { background: #1e9fff; color: #fff; border-color: #1e9fff; }
+        form.inline { display: inline; }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+{% block body %}
+<ul class="layui-nav" style="border-radius:0; background:#1E9FFF;">
+    <li class="layui-nav-item layui-nav-itemed" style="margin-left:16px;"><a href="{% url 'rg_index' %}">请求守卫</a></li>
+    <li class="layui-nav-item"><a href="{% url 'rg_index' %}">概览</a></li>
+    <li class="layui-nav-item"><a href="{% url 'rg_logs' %}">请求日志</a></li>
+    <li class="layui-nav-item"><a href="{% url 'rg_rules' %}">规则管理</a></li>
+    <li class="layui-nav-item" style="float:right; margin-right:16px;">
+        <form class="inline" method="post" action="{% url 'rg_logout' %}" onsubmit="return confirm('确定退出登录？')">
+            <button type="submit" class="layui-btn layui-btn-primary layui-btn-sm">退出</button>
+        </form>
+    </li>
+</ul>
+<div class="guard-body">
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}
+<script src="https://unpkg.com/layui@2.13.9/dist/layui.js"></script>
+<script>
+    // layui 模块初始化：让表单控件(下拉/复选)与导航按 layui 样式渲染
+    layui.use(['form', 'element'], function () {
+        if (layui.form && layui.form.render) { layui.form.render(); }
+    });
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+    "enabled": true,
+    "admin": {
+        "path": "request-guard",
+        "password": "123456",
+        "session_key": "rg_admin_ok"
+    },
+    "trusted_headers": ["HTTP_X_FORWARDED_FOR", "HTTP_X_REAL_IP", "HTTP_CF_CONNECTING_IP"],
+    "log": {
+        "enabled": true,
+        "exclude_paths": ["/static/", "/media/", "/favicon.ico", "/robots.txt", "/sitemap.xml"],
+        "keep_days": 7,
+        "max_rows": 500000,
+        "exclude_ips": []
+    },
+    "rate_limit": {
+        "enabled": false,
+        "per_ip_per_minute": 180,
+        "ban_minutes": 10
+    },
+    "identity": {
+        "spider": "pass",
+        "human_ref": "pass",
+        "direct": "pass",
+        "unknown": "pass",
+        "disguise_template": "request_guard/cloak_default.html"
+    },
+    "spider_keywords": {
+        "baidu": ["baiduspider"],
+        "google": ["googlebot"],
+        "bing": ["bingbot", "msnbot"],
+        "sogou": ["sogou"],
+        "360": ["360spider"],
+        "bytespider": ["bytespider"],
+        "yisou": ["yisouspider"],
+        "yandex": ["yandexbot"],
+        "petal": ["petalbot"],
+        "semrush": ["semrushbot"],
+        "ahrefs": ["ahrefsbot"],
+        "mj12": ["mj12bot"],
+        "duckduckgo": ["duckduckbot"],
+        "facebook": ["facebookexternalhit"],
+        "twitter": ["twitterbot"],
+        "linkedin": ["linkedinbot"],
+        "archiver": ["ia_archiver"],
+        "generic": ["spider", "bot", "crawler", "crawl", "slurp", "spider"]
+    },
+    "rules": []
+}

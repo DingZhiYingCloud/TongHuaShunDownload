@@ -1,0 +1,74 @@
+{% extends 'request_guard/base.html' %}
+{% block content %}
+<div class="guard-card">
+    <form method="get" action="{% url 'rg_logs' %}" class="layui-form" lay-filter="f">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <input type="text" name="ip" value="{{ filters.ip }}" placeholder="按 IP 筛选" class="layui-input" style="width:180px;">
+            <select name="identity">
+                <option value="">全部身份</option>
+                <option value="spider" {% if filters.identity == 'spider' %}selected{% endif %}>蜘蛛</option>
+                <option value="human_ref" {% if filters.identity == 'human_ref' %}selected{% endif %}>来源访问</option>
+                <option value="direct" {% if filters.identity == 'direct' %}selected{% endif %}>直连</option>
+                <option value="unknown" {% if filters.identity == 'unknown' %}selected{% endif %}>未知</option>
+            </select>
+            <select name="action">
+                <option value="">全部动作</option>
+                <option value="pass" {% if filters.action == 'pass' %}selected{% endif %}>放行</option>
+                <option value="block" {% if filters.action == 'block' %}selected{% endif %}>拦截403</option>
+                <option value="disguise" {% if filters.action == 'disguise' %}selected{% endif %}>伪装页</option>
+                <option value="redirect" {% if filters.action == 'redirect' %}selected{% endif %}>302跳转</option>
+                <option value="log" {% if filters.action == 'log' %}selected{% endif %}>仅记录</option>
+            </select>
+            <input type="checkbox" name="handled" value="on" lay-skin="primary" title="只看被处置"
+                   {% if filters.handled == 'on' %}checked{% endif %}>
+            <button type="submit" class="layui-btn layui-btn-sm" style="background:#1E9FFF;">筛选</button>
+            <a class="layui-btn layui-btn-sm layui-btn-primary" href="{% url 'rg_logs' %}">重置</a>
+            <span style="color:#999;">共 {{ total }} 条</span>
+        </div>
+    </form>
+</div>
+
+<div class="guard-card">
+    <table class="layui-table">
+        <thead><tr>
+            <th>时间</th><th>IP</th><th>身份</th><th>蜘蛛</th><th>请求</th>
+            <th>状态</th><th>耗时</th><th>动作</th><th>原因</th><th>操作</th>
+        </tr></thead>
+        <tbody>
+        {% for row in items %}
+        <tr>
+            <td>{{ row.ts|date:'m-d H:i:s' }}</td>
+            <td>{{ row.ip }}</td>
+            <td><span class="tag tag-{{ row.identity }}">{{ row.identity_label }}</span></td>
+            <td>{{ row.spider }}</td>
+            <td><span class="elip">{{ row.method }} {{ row.path }}{% if row.query %}?{{ row.query }}{% endif %}</span></td>
+            <td>{{ row.status }}</td>
+            <td>{{ row.duration_ms }}ms</td>
+            <td><span class="tag tag-{{ row.action }}">{{ row.action_label }}</span></td>
+            <td><span class="elip">{{ row.reason }}</span></td>
+            <td>
+                <a class="layui-btn layui-btn-xs" href="{% url 'rg_log_detail' row.pk %}">详情</a>
+                {% if row.ip %}
+                <form class="inline" method="post" action="{% url 'rg_block_ip' %}" onsubmit="return confirm('确定封禁 {{ row.ip }} ？')">
+                    <input type="hidden" name="ip" value="{{ row.ip }}">
+                    <input type="hidden" name="back" value="{{ request.get_full_path }}">
+                    <button type="submit" class="layui-btn layui-btn-xs layui-btn-danger">封禁</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="10" style="text-align:center;color:#999;">没有匹配的日志</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pager">
+        {% if page > 1 %}<a href="{{ prev_url }}">‹ 上一页</a>{% endif %}
+        {% for p, url in page_links %}
+            {% if p == page %}<span class="cur">{{ p }}</span>{% else %}<a href="{{ url }}">{{ p }}</a>{% endif %}
+        {% endfor %}
+        {% if page < total_pages %}<a href="{{ next_url }}">下一页 ›</a>{% endif %}
+    </div>
+</div>
+{% endblock %}

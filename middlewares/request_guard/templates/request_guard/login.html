@@ -1,0 +1,15 @@
+{% extends 'request_guard/base.html' %}
+{% block body %}
+<div style="max-width:380px; margin:10% auto; background:#fff; border-radius:6px; padding:30px 36px; box-shadow:0 2px 12px rgba(0,0,0,.08);">
+    <h2 style="text-align:center; margin:0 0 8px; color:#1E9FFF;">请求守卫后台</h2>
+    <p style="text-align:center; color:#999; margin-bottom:24px;">请输入管理密码进入</p>
+    {% if error %}<div class="layui-bg-red" style="padding:8px 12px; border-radius:4px; margin-bottom:12px;">{{ error }}</div>{% endif %}
+    <form method="post" class="layui-form">
+        <div class="layui-form-item">
+            <input type="password" name="password" required lay-verify="required" placeholder="管理密码"
+                   autocomplete="current-password" class="layui-input">
+        </div>
+        <button type="submit" class="layui-btn layui-btn-fluid" style="background:#1E9FFF;">登 录</button>
+    </form>
+</div>
+{% endblock %}
